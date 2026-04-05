@@ -404,6 +404,8 @@ Interactive API documentation powered by [Swagger UI](https://swagger.io/tools/s
 
 ### Web UI
 
+<img width="925" height="678" alt="image" src="https://github.com/user-attachments/assets/198338e3-7c37-41c7-af99-474ccbf849ec" />
+
 A lightweight query interface is available at the root URL (`http://localhost:3000/`). It provides:
 
 - A textarea for entering indicators, one per line
