@@ -628,3 +628,5 @@ cargo test --release --package misp-fbd bench_10k -- --nocapture --ignored
 ## License
 
 MIT License - see [LICENSE](LICENSE) for details.
+
+* Copyright (C) 2026 Andras Iklody
