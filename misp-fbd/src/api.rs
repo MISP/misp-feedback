@@ -23,6 +23,7 @@ pub fn router(engine: SharedEngine) -> Router {
         .route("/lookup/batch", post(lookup_batch))
         .route("/openapi.json", get(openapi_spec))
         .route("/docs", get(swagger_ui))
+        .route("/", get(web_ui))
         .with_state(engine)
 }
 
@@ -101,5 +102,12 @@ async fn swagger_ui() -> impl IntoResponse {
     (
         [(axum::http::header::CONTENT_TYPE, "text/html")],
         include_str!("../swagger-ui.html"),
+    )
+}
+
+async fn web_ui() -> impl IntoResponse {
+    (
+        [(axum::http::header::CONTENT_TYPE, "text/html")],
+        include_str!("../index.html"),
     )
 }
