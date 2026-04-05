@@ -36,7 +36,21 @@ fn default_warninglists_path() -> PathBuf {
 impl Config {
     pub fn load(path: &std::path::Path) -> Result<Self> {
         let content = std::fs::read_to_string(path)?;
-        let config: Config = toml::from_str(&content)?;
+        let mut config: Config = toml::from_str(&content)?;
+
+        // Resolve relative paths against the config file's directory
+        let config_dir = path
+            .canonicalize()
+            .unwrap_or_else(|_| path.to_path_buf())
+            .parent()
+            .unwrap_or(std::path::Path::new("."))
+            .to_path_buf();
+
+        if config.daemon.warninglists_path.is_relative() {
+            config.daemon.warninglists_path =
+                config_dir.join(&config.daemon.warninglists_path);
+        }
+
         Ok(config)
     }
 }

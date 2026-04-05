@@ -1,5 +1,6 @@
 mod client;
 mod configure;
+mod daemon;
 
 use std::io::{self, BufRead, IsTerminal};
 use std::path::PathBuf;
@@ -18,6 +19,10 @@ struct Cli {
     /// Path to the daemon Unix socket
     #[arg(short, long, default_value = "/tmp/misp-fbd.sock")]
     socket: PathBuf,
+
+    /// Path to daemon config file (used when auto-starting misp-fbd)
+    #[arg(short, long, default_value = "config.toml")]
+    config: PathBuf,
 
     /// Output format
     #[arg(short, long, default_value = "table")]
@@ -78,6 +83,14 @@ async fn main() -> Result<()> {
         } => {
             return configure::run(&output, &warninglists_path);
         }
+        _ => {}
+    }
+
+    // Ensure the daemon is running before any command that needs it
+    daemon::ensure_running(&cli.socket, &cli.config).await?;
+
+    match cli.command {
+        Command::Config { .. } => unreachable!(),
         Command::Health => {
             let resp: HealthResponse = client.get("/health").await?;
             match cli.format {
