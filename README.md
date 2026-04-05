@@ -402,6 +402,18 @@ Returns the OpenAPI 3.1 specification as JSON.
 
 Interactive API documentation powered by [Swagger UI](https://swagger.io/tools/swagger-ui/). Browse to `http://localhost:3000/docs` to explore all endpoints and execute test queries directly from the browser.
 
+### Web UI
+
+A lightweight query interface is available at the root URL (`http://localhost:3000/`). It provides:
+
+- A textarea for entering indicators, one per line
+- A "False positives only" toggle to filter by category
+- Results rendered as cards showing hit/clean status, matching warninglist slugs, categories, and matcher types (cidr, hostname, string, substring, regex)
+- A light/dark mode toggle (persisted across sessions, defaults to OS preference)
+- Ctrl+Enter keyboard shortcut to submit
+
+The web UI uses the `/lookup/batch` endpoint under the hood, so performance is the same as the batch API.
+
 ### Using the HTTP API over the Unix socket
 
 All endpoints are also available over the Unix socket, without enabling `http_bind`:
