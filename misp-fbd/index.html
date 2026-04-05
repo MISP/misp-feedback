@@ -5,13 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MISP Feedback</title>
     <style>
+        :root {
+            --bg: #f5f7fa;
+            --text: #1a1a2e;
+            --text-muted: #6b7280;
+            --text-faint: #9ca3af;
+            --card-bg: #fff;
+            --card-border: #e2e8f0;
+            --input-bg: #fafbfc;
+            --input-border: #d1d5db;
+            --input-label: #374151;
+            --accent: #4f6ef7;
+            --accent-hover: #3b5de7;
+            --accent-active: #2f4fd6;
+            --accent-glow: rgba(79, 110, 247, 0.1);
+            --btn-disabled: #a0aec0;
+            --divider: #f3f4f6;
+            --badge-hit-bg: #fef3c7;
+            --badge-hit-text: #92400e;
+            --badge-clean-bg: #d1fae5;
+            --badge-clean-text: #065f46;
+            --cat-fp-bg: #fee2e2;
+            --cat-fp-text: #991b1b;
+            --cat-known-bg: #e0e7ff;
+            --cat-known-text: #3730a3;
+            --error-bg: #fef2f2;
+            --error-border: #fecaca;
+            --error-text: #991b1b;
+            --pill-type-bg: #f0f4ff;
+            --pill-type-text: #4338ca;
+            --toggle-bg: transparent;
+            --toggle-border: #d1d5db;
+        }
+
+        [data-theme="dark"] {
+            --bg: #111827;
+            --text: #e5e7eb;
+            --text-muted: #9ca3af;
+            --text-faint: #6b7280;
+            --card-bg: #1f2937;
+            --card-border: #374151;
+            --input-bg: #1a2332;
+            --input-border: #4b5563;
+            --input-label: #d1d5db;
+            --accent: #6d8afb;
+            --accent-hover: #5a78f0;
+            --accent-active: #4f6ef7;
+            --accent-glow: rgba(109, 138, 251, 0.15);
+            --btn-disabled: #4b5563;
+            --divider: #374151;
+            --badge-hit-bg: #78350f;
+            --badge-hit-text: #fef3c7;
+            --badge-clean-bg: #064e3b;
+            --badge-clean-text: #d1fae5;
+            --cat-fp-bg: #7f1d1d;
+            --cat-fp-text: #fecaca;
+            --cat-known-bg: #312e81;
+            --cat-known-text: #c7d2fe;
+            --error-bg: #450a0a;
+            --error-border: #7f1d1d;
+            --error-text: #fca5a5;
+            --pill-type-bg: #1e1b4b;
+            --pill-type-text: #a5b4fc;
+            --toggle-bg: transparent;
+            --toggle-border: #4b5563;
+        }
+
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: #f5f7fa;
-            color: #1a1a2e;
+            background: var(--bg);
+            color: var(--text);
             line-height: 1.5;
+            transition: background 0.2s, color 0.2s;
         }
 
         .container {
@@ -22,16 +89,21 @@
 
         header {
             margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
         }
+
+        .header-text { flex: 1; }
 
         header h1 {
             font-size: 1.5rem;
             font-weight: 600;
-            color: #1a1a2e;
+            color: var(--text);
         }
 
         header p {
-            color: #6b7280;
+            color: var(--text-muted);
             font-size: 0.9rem;
             margin-top: 0.25rem;
         }
@@ -42,7 +114,7 @@
         }
 
         header nav a {
-            color: #4f6ef7;
+            color: var(--accent);
             text-decoration: none;
             margin-right: 1rem;
         }
@@ -51,45 +123,63 @@
             text-decoration: underline;
         }
 
+        .theme-toggle {
+            background: var(--toggle-bg);
+            border: 1px solid var(--toggle-border);
+            border-radius: 6px;
+            padding: 0.4rem 0.55rem;
+            cursor: pointer;
+            font-size: 1.1rem;
+            line-height: 1;
+            color: var(--text-muted);
+            transition: border-color 0.15s;
+            margin-top: 0.1rem;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent);
+        }
+
         .input-section {
-            background: #fff;
-            border: 1px solid #e2e8f0;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
             border-radius: 8px;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
+            transition: background 0.2s, border-color 0.2s;
         }
 
-        .input-section label {
+        .input-section > label {
             display: block;
             font-weight: 500;
             font-size: 0.9rem;
             margin-bottom: 0.5rem;
-            color: #374151;
+            color: var(--input-label);
         }
 
         textarea {
             width: 100%;
             min-height: 140px;
             padding: 0.75rem;
-            border: 1px solid #d1d5db;
+            border: 1px solid var(--input-border);
             border-radius: 6px;
             font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace;
             font-size: 0.875rem;
             line-height: 1.6;
             resize: vertical;
-            color: #1a1a2e;
-            background: #fafbfc;
-            transition: border-color 0.15s;
+            color: var(--text);
+            background: var(--input-bg);
+            transition: border-color 0.15s, background 0.2s, color 0.2s;
         }
 
         textarea:focus {
             outline: none;
-            border-color: #4f6ef7;
-            box-shadow: 0 0 0 3px rgba(79, 110, 247, 0.1);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
         }
 
         textarea::placeholder {
-            color: #9ca3af;
+            color: var(--text-faint);
         }
 
         .controls {
@@ -106,12 +196,12 @@
             align-items: center;
             gap: 0.35rem;
             cursor: pointer;
-            color: #6b7280;
+            color: var(--text-muted);
         }
 
-        button {
+        button#submit {
             padding: 0.6rem 1.5rem;
-            background: #4f6ef7;
+            background: var(--accent);
             color: #fff;
             border: none;
             border-radius: 6px;
@@ -121,14 +211,14 @@
             transition: background 0.15s;
         }
 
-        button:hover { background: #3b5de7; }
-        button:active { background: #2f4fd6; }
-        button:disabled { background: #a0aec0; cursor: not-allowed; }
+        button#submit:hover { background: var(--accent-hover); }
+        button#submit:active { background: var(--accent-active); }
+        button#submit:disabled { background: var(--btn-disabled); cursor: not-allowed; }
 
         .stats {
             margin-left: auto;
             font-size: 0.8rem;
-            color: #9ca3af;
+            color: var(--text-faint);
         }
 
         /* Results */
@@ -136,11 +226,12 @@
         #results.visible { display: block; }
 
         .result-card {
-            background: #fff;
-            border: 1px solid #e2e8f0;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
             border-radius: 8px;
             padding: 1rem 1.25rem;
             margin-bottom: 0.75rem;
+            transition: background 0.2s, border-color 0.2s;
         }
 
         .result-header {
@@ -167,24 +258,24 @@
         }
 
         .badge-hit {
-            background: #fef3c7;
-            color: #92400e;
+            background: var(--badge-hit-bg);
+            color: var(--badge-hit-text);
         }
 
         .badge-clean {
-            background: #d1fae5;
-            color: #065f46;
+            background: var(--badge-clean-bg);
+            color: var(--badge-clean-text);
         }
 
         .match-count {
             font-size: 0.8rem;
-            color: #6b7280;
+            color: var(--text-muted);
             margin-left: auto;
         }
 
         .matches-list {
             margin-top: 0.75rem;
-            border-top: 1px solid #f3f4f6;
+            border-top: 1px solid var(--divider);
             padding-top: 0.5rem;
         }
 
@@ -199,12 +290,12 @@
         .match-slug {
             font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace;
             font-size: 0.8rem;
-            color: #4f6ef7;
+            color: var(--accent);
             white-space: nowrap;
         }
 
         .match-name {
-            color: #6b7280;
+            color: var(--text-muted);
         }
 
         .match-category {
@@ -215,21 +306,30 @@
         }
 
         .cat-fp {
-            background: #fee2e2;
-            color: #991b1b;
+            background: var(--cat-fp-bg);
+            color: var(--cat-fp-text);
         }
 
         .cat-known {
-            background: #e0e7ff;
-            color: #3730a3;
+            background: var(--cat-known-bg);
+            color: var(--cat-known-text);
+        }
+
+        .pill-type {
+            font-size: 0.7rem;
+            padding: 0.05rem 0.4rem;
+            border-radius: 4px;
+            white-space: nowrap;
+            background: var(--pill-type-bg);
+            color: var(--pill-type-text);
         }
 
         .error-msg {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
+            background: var(--error-bg);
+            border: 1px solid var(--error-border);
             border-radius: 8px;
             padding: 1rem;
-            color: #991b1b;
+            color: var(--error-text);
             font-size: 0.9rem;
         }
     </style>
@@ -237,13 +337,16 @@
 <body>
     <div class="container">
         <header>
-            <h1>MISP Feedback</h1>
-            <p>Check indicators against MISP warninglists</p>
-            <nav>
-                <a href="/docs">API Docs</a>
-                <a href="/openapi.json">OpenAPI Spec</a>
-                <a href="/health">Health</a>
-            </nav>
+            <div class="header-text">
+                <h1>MISP Feedback</h1>
+                <p>Check indicators against MISP warninglists</p>
+                <nav>
+                    <a href="/docs">API Docs</a>
+                    <a href="/openapi.json">OpenAPI Spec</a>
+                    <a href="/health">Health</a>
+                </nav>
+            </div>
+            <button class="theme-toggle" id="theme-toggle" title="Toggle dark mode" aria-label="Toggle dark mode"></button>
         </header>
 
         <div class="input-section">
@@ -263,6 +366,29 @@
     </div>
 
     <script>
+        // Theme toggle
+        const themeBtn = document.getElementById('theme-toggle');
+        const root = document.documentElement;
+
+        function setTheme(dark) {
+            root.setAttribute('data-theme', dark ? 'dark' : 'light');
+            themeBtn.textContent = dark ? '\u2600\uFE0F' : '\uD83C\uDF19';
+            localStorage.setItem('theme', dark ? 'dark' : 'light');
+        }
+
+        // Init from stored preference or system preference
+        const stored = localStorage.getItem('theme');
+        if (stored) {
+            setTheme(stored === 'dark');
+        } else {
+            setTheme(window.matchMedia('(prefers-color-scheme: dark)').matches);
+        }
+
+        themeBtn.addEventListener('click', function() {
+            setTheme(root.getAttribute('data-theme') !== 'dark');
+        });
+
+        // Lookup logic
         const textarea = document.getElementById('values');
         const btn = document.getElementById('submit');
         const fpOnly = document.getElementById('fp-only');
@@ -349,6 +475,7 @@
                         html += '<div class="match-item">';
                         html += '<span class="match-slug">' + escapeHtml(m.slug) + '</span>';
                         html += '<span class="match-category ' + catClass + '">' + escapeHtml(m.category) + '</span>';
+                        html += '<span class="pill-type">' + escapeHtml(m.list_type) + '</span>';
                         html += '<span class="match-name">' + escapeHtml(m.name) + '</span>';
                         html += '</div>';
                     }
