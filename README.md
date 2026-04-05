@@ -27,6 +27,12 @@ If you cloned without `--recurse-submodules`, fetch the warninglists separately:
 git submodule update --init
 ```
 
+Copy the example config file:
+
+```bash
+cp config.toml.example config.toml
+```
+
 ### Configuration
 
 Generate a config file interactively:
@@ -64,7 +70,7 @@ $ misp-fb config --output /etc/misp-feedback/config.toml --warninglists-path /op
 
 When choosing "Only selected lists" or "All except selected lists", the tool scans the warninglists directory and presents a multi-select list of all available warninglists to pick from.
 
-Or edit the included `config.toml` directly:
+Or edit `config.toml` directly (copy from `config.toml.example` if you haven't already):
 
 ```toml
 [daemon]
@@ -387,6 +393,14 @@ $ curl http://localhost:3000/lists
   ]
 }
 ```
+
+#### `GET /openapi.json`
+
+Returns the OpenAPI 3.1 specification as JSON.
+
+#### `GET /docs`
+
+Interactive API documentation powered by [Swagger UI](https://swagger.io/tools/swagger-ui/). Browse to `http://localhost:3000/docs` to explore all endpoints and execute test queries directly from the browser.
 
 ### Using the HTTP API over the Unix socket
 

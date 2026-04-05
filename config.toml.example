@@ -1,0 +1,7 @@
+[daemon]
+socket_path = "/tmp/misp-fbd.sock"
+http_bind = "127.0.0.1:3000"
+warninglists_path = "./misp-warninglists/lists"
+
+[warninglists]
+lists = []

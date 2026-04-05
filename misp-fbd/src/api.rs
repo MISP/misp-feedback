@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use axum::extract::State;
 use axum::http::StatusCode;
+use axum::response::IntoResponse;
 use axum::routing::{get, post};
 use axum::{Json, Router};
 use misp_fb_core::engine::MatchEngine;
@@ -20,6 +21,8 @@ pub fn router(engine: SharedEngine) -> Router {
         .route("/lists", get(list_warninglists))
         .route("/lookup", post(lookup))
         .route("/lookup/batch", post(lookup_batch))
+        .route("/openapi.json", get(openapi_spec))
+        .route("/docs", get(swagger_ui))
         .with_state(engine)
 }
 
@@ -85,4 +88,18 @@ async fn lookup_batch(
         .collect();
 
     Ok(Json(BatchLookupResponse { results }))
+}
+
+async fn openapi_spec() -> impl IntoResponse {
+    (
+        [(axum::http::header::CONTENT_TYPE, "application/json")],
+        include_str!("../openapi.json"),
+    )
+}
+
+async fn swagger_ui() -> impl IntoResponse {
+    (
+        [(axum::http::header::CONTENT_TYPE, "text/html")],
+        include_str!("../swagger-ui.html"),
+    )
 }

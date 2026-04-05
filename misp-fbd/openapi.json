@@ -1,0 +1,270 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "MISP Feedback API",
+    "description": "High-performance warninglist lookup engine for checking indicators of compromise (IOCs) against MISP warninglists.",
+    "version": "0.1.0",
+    "license": {
+      "name": "AGPL-3.0"
+    }
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health check",
+        "description": "Returns the daemon status and number of loaded warninglists.",
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "description": "Daemon is healthy",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HealthResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/lists": {
+      "get": {
+        "summary": "List loaded warninglists",
+        "description": "Returns metadata for all currently loaded warninglists.",
+        "operationId": "listWarninglists",
+        "responses": {
+          "200": {
+            "description": "List of warninglists",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ListsResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/lookup": {
+      "post": {
+        "summary": "Look up a single value",
+        "description": "Check a single indicator value against all loaded warninglists.",
+        "operationId": "lookup",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LookupRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Lookup result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LookupResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/lookup/batch": {
+      "post": {
+        "summary": "Batch lookup",
+        "description": "Check multiple indicator values in a single request. Maximum 10,000 values per request.",
+        "operationId": "lookupBatch",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/BatchLookupRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Batch lookup results",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BatchLookupResponse" }
+              }
+            }
+          },
+          "413": {
+            "description": "Payload too large - more than 10,000 values submitted"
+          }
+        }
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "summary": "OpenAPI specification",
+        "description": "Returns this OpenAPI 3.1 specification as JSON.",
+        "operationId": "openapiSpec",
+        "responses": {
+          "200": {
+            "description": "OpenAPI spec",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LookupRequest": {
+        "type": "object",
+        "required": ["value"],
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "The indicator value to look up (IP, domain, hostname, etc.)."
+          },
+          "false_positives_only": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, only return matches from warninglists with category false-positive."
+          }
+        }
+      },
+      "BatchLookupRequest": {
+        "type": "object",
+        "required": ["values"],
+        "properties": {
+          "values": {
+            "type": "array",
+            "items": { "type": "string" },
+            "maxItems": 10000,
+            "description": "List of indicator values to look up."
+          },
+          "false_positives_only": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, only return matches from warninglists with category false-positive."
+          }
+        }
+      },
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "ok"
+          },
+          "lists_loaded": {
+            "type": "integer",
+            "description": "Number of warninglists currently loaded."
+          }
+        }
+      },
+      "ListsResponse": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "description": "Total number of loaded warninglists."
+          },
+          "lists": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/WarningListInfo" }
+          }
+        }
+      },
+      "LookupResponse": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "The queried indicator value."
+          },
+          "matched": {
+            "type": "boolean",
+            "description": "Whether any warninglist matched this value."
+          },
+          "matches": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/MatchInfo" }
+          }
+        }
+      },
+      "BatchLookupResponse": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/LookupResponse" }
+          }
+        }
+      },
+      "MatchInfo": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "description": "Short identifier for the warninglist (directory name)."
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable name of the warninglist."
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of what the warninglist covers."
+          },
+          "list_type": {
+            "type": "string",
+            "enum": ["cidr", "string", "hostname", "substring", "regex"],
+            "description": "The matcher type used by this warninglist."
+          },
+          "category": {
+            "type": "string",
+            "enum": ["false-positive", "known"],
+            "description": "Category of the warninglist. false-positive indicates likely false positives, known indicates known context without implying false positive."
+          },
+          "matching_attributes": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "MISP attribute types this warninglist is designed to match against."
+          }
+        }
+      },
+      "WarningListInfo": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer"
+          },
+          "list_type": {
+            "type": "string",
+            "enum": ["cidr", "string", "hostname", "substring", "regex"]
+          },
+          "category": {
+            "type": "string",
+            "enum": ["false-positive", "known"]
+          },
+          "entry_count": {
+            "type": "integer",
+            "description": "Number of entries in the warninglist."
+          },
+          "matching_attributes": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "slug": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
